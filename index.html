@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recharge Portal</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 15px;
+        }
+        .card {
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #1a73e8;
+        }
+        .wallet-box {
+            background: #e8f0fe;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .wallet-box h3 {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 5px;
+        }
+        .wallet-box p {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1a73e8;
+        }
+        label {
+            display: block;
+            margin-top: 12px;
+            font-size: 13px;
+            font-weight: bold;
+            color: #333;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 6px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        button {
+            width: 100%;
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            padding: 12px;
+            margin-top: 15px;
+            border-radius: 5px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #1557b0;
+        }
+        .btn-secondary {
+            background-color: #34a853;
+        }
+        .btn-secondary:hover {
+            background-color: #2b8844;
+        }
+        .btn-danger {
+            background-color: #ea4335;
+            margin-top: 10px;
+        }
+        .btn-danger:hover {
+            background-color: #c5221f;
+        }
+        .section-title {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+            font-size: 16px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Login Page -->
+    <div class="card" id="login-section">
+        <h2>Login to Portal</h2>
+        <form id="login-form">
+            <label for="username">Username / Mobile</label>
+            <input type="text" id="username" placeholder="Enter username" required>
+
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="Enter password" required>
+
+            <button type="submit">Login</button>
+        </form>
+    </div>
+
+    <!-- Dashboard (Hidden by default) -->
+    <div class="card" id="dashboard-section" style="display: none;">
+        <h2>Dashboard</h2>
+
+        <!-- Wallet Balance Display -->
+        <div class="wallet-box">
+            <h3>Available Wallet Balance</h3>
+            <p id="balance-display">₹500.00</p>
+        </div>
+
+        <!-- Add Money Section -->
+        <div class="section-title">Add Money to Wallet</div>
+        <form id="add-money-form">
+            <input type="number" id="add-amount" placeholder="Enter amount to add (₹)" min="1" required>
+            <button type="submit" class="btn-secondary">Add Money</button>
+        </form>
+
+        <!-- Recharge Section -->
+        <div class="section-title">Quick Recharge</div>
+        <form id="recharge-form">
+            <label for="service-type">Recharge Type</label>
+            <select id="service-type">
+                <option value="mobile">Prepaid Mobile</option>
+                <option value="dth">DTH Service</option>
+            </select>
+
+            <label for="operator">Operator</label>
+            <select id="operator">
+                <option value="Jio">Jio</option>
+                <option value="Airtel">Airtel</option>
+                <option value="Vi">Vi</option>
+                <option value="BSNL">BSNL</option>
+                <option value="Tata Play">Tata Play</option>
+                <option value="Dish TV">Dish TV</option>
+            </select>
+
+            <label for="account-no">Mobile / Subscriber Number</label>
+            <input type="text" id="account-no" placeholder="Enter 10-digit number" required>
+
+            <label for="recharge-amount">Amount (₹)</label>
+            <input type="number" id="recharge-amount" placeholder="Enter recharge amount" min="10" required>
+
+            <button type="submit">Recharge Now</button>
+        </form>
+
+        <button class="btn-danger" id="logout-btn">Logout</button>
+    </div>
+
+    <script>
+        let walletBalance = 500;
+
+        // Login Handler
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('dashboard-section').style.display = 'block';
+        });
+
+        // Add Money Handler
+        document.getElementById('add-money-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const amount = parseFloat(document.getElementById('add-amount').value);
+            if (amount > 0) {
+                walletBalance += amount;
+                updateBalance();
+                alert('₹' + amount + ' successfully added to your wallet!');
+                document.getElementById('add-amount').value = '';
+            }
+        });
+
+        // Recharge Handler
+        document.getElementById('recharge-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const amount = parseFloat(document.getElementById('recharge-amount').value);
+            const account = document.getElementById('account-no').value;
+            const operator = document.getElementById('operator').value;
+
+            if (walletBalance >= amount) {
+                walletBalance -= amount;
+                updateBalance();
+                alert('Success! Recharge of ₹' + amount + ' for ' + operator + ' (' + account + ') completed.');
+                document.getElementById('recharge-amount').value = '';
+                document.getElementById('account-no').value = '';
+            } else {
+                alert('Insufficient balance! Please add money to your wallet.');
+            }
+        });
+
+        // Logout Handler
+        document.getElementById('logout-btn').addEventListener('click', function() {
+            document.getElementById('dashboard-section').style.display = 'none';
+            document.getElementById('login-section').style.display = 'block';
+        });
+
+        function updateBalance() {
+            document.getElementById('balance-display').innerText = '₹' + walletBalance.toFixed(2);
+        }
+    </script>
+</body>
+</html>
